@@ -1,4 +1,4 @@
-from xml.dom import minidom
+from lxml import etree
 import os
 import csv
 from os import getcwd
@@ -12,7 +12,7 @@ files = os.listdir('hmdb_metabolites')
 if (files[0]=='.DS_Store'):
     files.pop(0)
 
-if 'hmdb_metabolites.xml' in files:
+if 'hmdb_metabolites.xml' in files and len(files)>1:
     print "please"
     sys.exit()
 
@@ -21,27 +21,36 @@ mapping = dict()
 mapping2 = dict()
 for x in range(0,len(files)):
 #for x in range(0,100):
-   xmldoc = minidom.parse('hmdb_metabolites/'+ files[x])
-   try:
-      chemical_formula = xmldoc.getElementsByTagName('chemical_formula')[0].childNodes[0].nodeValue
-   except:
-      chemical_formula = "no_entry"
-   try:
-      monisotopic_moleculate_weight = xmldoc.getElementsByTagName('monisotopic_moleculate_weight')[0].childNodes[0].nodeValue
-   except:
-      monisotopic_moleculate_weight = 0
-   accession = xmldoc.getElementsByTagName('accession')[0].childNodes[0].nodeValue
-   #chemical_formula = chemical_formula.encode('ascii')
-   #accession = accession.encode('ascii')
-   mapping2[chemical_formula] = float(monisotopic_moleculate_weight)
-   if not chemical_formula in mapping:
-      #print(chemical_formula)
-      mapping[chemical_formula] = ["HMDB:" + accession]
-   else:
-      #print(type(chemical_formula))
-      mapping[chemical_formula].append('HMDB:'+accession)
-   #(chemical_formula)
-   #print(monisotopic_moleculate_weight)
+   context = etree.iterparse('hmdb_metabolites/'+ files[x], events=('end',))
+
+   chemical_formula = "no_entry"
+   monisotopic_moleculate_weight = 0
+   accession = None
+
+   for action, elem in context:
+      if elem.tag=='{http://www.hmdb.ca}chemical_formula':
+         chemical_formula = elem.text
+         pass
+      if elem.tag=='{http://www.hmdb.ca}monisotopic_molecular_weight': # and elem.text!=None:
+         monisotopic_moleculate_weight = elem.text
+         pass
+      if accession==None and elem.tag=='{http://www.hmdb.ca}accession':
+          accession = elem.text
+         pass
+      if elem.tag=='{http://www.hmdb.ca}metabolite':
+         #print accession, monisotopic_moleculate_weight
+         if monisotopic_moleculate_weight!=None:
+            mapping2[chemical_formula] = float(monisotopic_moleculate_weight)
+            if not chemical_formula in mapping:
+               mapping[chemical_formula] = ["HMDB:" + accession]
+           else:
+               mapping[chemical_formula].append('HMDB:'+accession)
+         chemical_formula = "no_entry"
+         monisotopic_moleculate_weight = 0
+         accession = None
+         elem.clear()
+         while elem.getprevious() is not None:
+            del elem.getparent()[0]
 
 mapping['C10(2)H3(1)H16NO4'] = ["EXTRA:EXTRA001"]
 mapping['C16H18N4O2'] = ["EXTRA:EXTRA002"]
@@ -63,7 +72,7 @@ f.write('HMDB')
 f.write('\n')
 f.write('database_version')
 f.write('\t')
-f.write('3.6')
+f.write('4.0')
 f.write('\n')
 
 for (key,weight) in sorted_x:
