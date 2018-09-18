@@ -1,3 +1,4 @@
+from xml.dom import minidom
 from lxml import etree
 import os
 import csv
@@ -35,7 +36,7 @@ for x in range(0,len(files)):
          monisotopic_moleculate_weight = elem.text
          pass
       if accession==None and elem.tag=='{http://www.hmdb.ca}accession':
-          accession = elem.text
+         accession = elem.text
          pass
       if elem.tag=='{http://www.hmdb.ca}metabolite':
          #print accession, monisotopic_moleculate_weight
@@ -43,7 +44,7 @@ for x in range(0,len(files)):
             mapping2[chemical_formula] = float(monisotopic_moleculate_weight)
             if not chemical_formula in mapping:
                mapping[chemical_formula] = ["HMDB:" + accession]
-           else:
+            else:
                mapping[chemical_formula].append('HMDB:'+accession)
          chemical_formula = "no_entry"
          monisotopic_moleculate_weight = 0

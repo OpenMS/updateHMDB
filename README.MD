@@ -13,6 +13,3 @@ It generates a HMDBMappingFile.tsv and a HMDB2StructMapping.tsv that is used by 
 python generateHMDB2StructMapping.py 
 python generateHMDBMappingFile.py
 ```
-
-**Note :** 
-currently, there is one line that contains a UTF-8 Character, you have to edit it manually ( in the HMDB2StructMapping.tsv file)

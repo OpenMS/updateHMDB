@@ -23,19 +23,20 @@ for x in range(0,len(files)):
    smiles = ""
    inchi = ""
    accession = None
+   name = None
 
-   for action, elem in context:
+   for event, elem in context:
       if elem.tag=='{http://www.hmdb.ca}inchi':
-	 inchi = elem.text
+         inchi = elem.text
          pass
       if elem.tag=='{http://www.hmdb.ca}smiles':
-	 smiles = elem.text
+         smiles = elem.text
          pass
-      if elem.tag=='{http://www.hmdb.ca}name':
-	 name = elem.text.strip()
+      if name==None and elem.tag=='{http://www.hmdb.ca}name':
+         name = elem.text.strip()
          pass
       if accession==None and elem.tag=='{http://www.hmdb.ca}accession':
-	 accession = elem.text
+         accession = elem.text
          pass
       if elem.tag=='{http://www.hmdb.ca}metabolite':
          if(inchi or smiles):
@@ -47,6 +48,7 @@ for x in range(0,len(files)):
          smiles = ""
          inchi = ""
          accession = None
+         name = None
          elem.clear()
          while elem.getprevious() is not None:
             del elem.getparent()[0]
@@ -55,10 +57,10 @@ for x in range(0,len(files)):
 f2 = open('extras.tsv', 'r')
 extras = f2.readlines()
 for line in extras:
-	elements = re.split(r'\t+', line)
-	for element in elements[:-1]:
-		f.write(element)
-		f.write('\t')
-	f.write(elements[-1])
+        elements = re.split(r'\t+', line)
+        for element in elements[:-1]:
+                f.write(element)
+                f.write('\t')
+        f.write(elements[-1])
 
 f.close()
