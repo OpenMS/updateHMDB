@@ -12,7 +12,7 @@ Steps to do:
 4. delete hmdb_metabolites.xml unless it is the only file
 5. execute python script:
 ```
-python generateHMDB2StructMapping.py /your/path/hmdb_metabolites/
+python generateHMDBFilesForOpenMS.py /your/path/hmdb_metabolites/
 ```
 6. double-check
 7. create a pull request to the OpenMS/OpenMS repository
