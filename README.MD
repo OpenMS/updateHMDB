@@ -3,7 +3,7 @@ This script updates the Human Metabolites Database (HMDB) files for OpenMS
 It generates a HMDBMappingFile.tsv and a HMDB2StructMapping.tsv that is used by the AccurateMassSearch tool
 
 Steps to do:
-############
+============
  
 1. `git clone` this repo
 2. Download "**All Metabolites**" files as XML from http://www.hmdb.ca/downloads   
@@ -18,7 +18,7 @@ python generateHMDB2StructMapping.py /your/path/hmdb_metabolites/
 7. create a pull request to the OpenMS/OpenMS repository
 
 Requires:
-#########
+=========
 
 - python 3.6+
 - lxml
